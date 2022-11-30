@@ -1,0 +1,29 @@
+---
+title: "Advent of Code 2022"
+output: 
+    github_document: 
+        toc: true
+        toc_depth: 1
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+purrr::walk(list.files(here::here("R"), full.names = TRUE), source)
+```
+
+Here's my work on Advent of Code 2022.
+
+# Day 1
+
+## Part 1
+
+```{r day01-part1}
+#d01_input <- scan(here::here("data/day01.txt"))
+```
+
+## Part 2
+
+```{r day01-part2}
+
+```
+
