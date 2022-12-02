@@ -4,6 +4,9 @@ Advent of Code 2022
 - <a href="#day-1" id="toc-day-1">Day 1</a>
 - <a href="#day-2" id="toc-day-2">Day 2</a>
 
+Here’s my work on Advent of Code 2022. I’ve never finished one of these,
+perhaps this will be the year …
+
 ``` r
 knitr::opts_chunk$set(echo = TRUE)
 purrr::walk(list.files(here::here("R"), full.names = TRUE), source)
@@ -25,8 +28,6 @@ library(dplyr)
 library(readr)
 library(purrr)
 ```
-
-Here’s my work on Advent of Code 2022.
 
 # Day 1
 
