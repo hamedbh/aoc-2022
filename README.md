@@ -9,7 +9,7 @@ perhaps this will be the year …
 
 ``` r
 knitr::opts_chunk$set(echo = TRUE)
-purrr::walk(list.files(here::here("R"), full.names = TRUE), source)
+library(purrr)
 library(dplyr)
 ```
 
@@ -25,8 +25,7 @@ library(dplyr)
     ##     intersect, setdiff, setequal, union
 
 ``` r
-library(readr)
-library(purrr)
+walk(list.files(here::here("R"), full.names = TRUE), source)
 ```
 
 # Day 1
@@ -34,46 +33,41 @@ library(purrr)
 ## Part 1
 
 ``` r
-d01_input <- tibble(calories = readLines(here::here("input/day_01.txt"))) |> 
-  mutate(elf = cumsum(calories == "") + 1) |> 
-  filter(calories != "") |> 
-  mutate(across(calories, as.integer)) |> 
-  group_by(elf) |> 
-  summarise(across(calories, sum))
+d01_input <- readLines(here::here("input/day_01.txt")) |> 
+  as.integer()
 
-d01_input |> 
-  slice_max(calories, n = 1)
+d01_calories <- split(d01_input, cumsum(is.na(d01_input))) |> 
+  vapply(sum, integer(1L), na.rm = TRUE)
+
+d01_calories |> 
+  max()
 ```
 
-    ## # A tibble: 1 × 2
-    ##     elf calories
-    ##   <dbl>    <int>
-    ## 1   184    67450
+    ## [1] 67450
 
 ## Part 2
 
 ``` r
-d01_input |> 
-  slice_max(calories, n = 3) |> 
-  summarise(across(calories, sum))
+d01_calories |> 
+  sort(decreasing = TRUE) |> 
+  head(3) |> 
+  sum()
 ```
 
-    ## # A tibble: 1 × 1
-    ##   calories
-    ##      <int>
-    ## 1   199357
+    ## [1] 199357
 
 # Day 2
 
 ## Part 1
 
 ``` r
-d02_input <- read_delim(
-  here::here("input/day_02.txt"),
-  delim = " ",
-  col_names = c("opp", "me"), 
-  show_col_types = FALSE
-)
+d02_input <- read.table(
+  here::here("input/day_02.txt"), 
+  sep = " ", 
+  col.names = c("opp", "me")
+) |> 
+  as_tibble()
+
 d02_input |> 
   mutate(
     opp_int = map_int(opp, ~ switch(.x, A = 1L, B = 2L, C = 3L)), 
