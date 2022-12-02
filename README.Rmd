@@ -6,6 +6,8 @@ output:
         toc_depth: 1
 ---
 
+Here's my work on Advent of Code 2022. I've never finished one of these, perhaps this will be the year ...
+
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 purrr::walk(list.files(here::here("R"), full.names = TRUE), source)
@@ -14,7 +16,6 @@ library(readr)
 library(purrr)
 ```
 
-Here's my work on Advent of Code 2022.
 
 # Day 1
 
