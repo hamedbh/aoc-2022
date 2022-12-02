@@ -10,10 +10,9 @@ Here's my work on Advent of Code 2022. I've never finished one of these, perhaps
 
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
-purrr::walk(list.files(here::here("R"), full.names = TRUE), source)
-library(dplyr)
-library(readr)
 library(purrr)
+library(dplyr)
+walk(list.files(here::here("R"), full.names = TRUE), source)
 ```
 
 
@@ -21,37 +20,38 @@ library(purrr)
 
 ## Part 1
 
-```{r day01-part1}
-d01_input <- tibble(calories = readLines(here::here("input/day_01.txt"))) |> 
-  mutate(elf = cumsum(calories == "") + 1) |> 
-  filter(calories != "") |> 
-  mutate(across(calories, as.integer)) |> 
-  group_by(elf) |> 
-  summarise(across(calories, sum))
+```{r day1-part1}
+d01_input <- readLines(here::here("input/day_01.txt")) |> 
+  as.integer()
 
-d01_input |> 
-  slice_max(calories, n = 1)
+d01_calories <- split(d01_input, cumsum(is.na(d01_input))) |> 
+  vapply(sum, integer(1L), na.rm = TRUE)
+
+d01_calories |> 
+  max()
 ```
 
 ## Part 2
 
-```{r day01-part2}
-d01_input |> 
-  slice_max(calories, n = 3) |> 
-  summarise(across(calories, sum))
+```{r day1-part2}
+d01_calories |> 
+  sort(decreasing = TRUE) |> 
+  head(3) |> 
+  sum()
 ```
 
 # Day 2
 
 ## Part 1
 
-```{r day02-part1}
-d02_input <- read_delim(
-  here::here("input/day_02.txt"),
-  delim = " ",
-  col_names = c("opp", "me"), 
-  show_col_types = FALSE
-)
+```{r day2-part1}
+d02_input <- read.table(
+  here::here("input/day_02.txt"), 
+  sep = " ", 
+  col.names = c("opp", "me")
+) |> 
+  as_tibble()
+
 d02_input |> 
   mutate(
     opp_int = map_int(opp, ~ switch(.x, A = 1L, B = 2L, C = 3L)), 
@@ -67,7 +67,7 @@ d02_input |>
 
 ## Part 2
 
-```{r day02-part2}
+```{r day2-part2}
 d02_input |> 
   mutate(
     opp_int = map_int(opp, ~ switch(.x, A = 1L, B = 2L, C = 3L)), 
