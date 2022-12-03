@@ -3,6 +3,7 @@ Advent of Code 2022
 
 - <a href="#day-1" id="toc-day-1">Day 1</a>
 - <a href="#day-2" id="toc-day-2">Day 2</a>
+- <a href="#day-3" id="toc-day-3">Day 3</a>
 
 Here’s my work on Advent of Code 2022. I’ve never finished one of these,
 perhaps this will be the year …
@@ -108,3 +109,40 @@ d02_input |>
     ##   total_score
     ##         <dbl>
     ## 1       13448
+
+# Day 3
+
+## Part 1
+
+``` r
+d03_input <- readLines(here::here("input/day_03.txt")) |> 
+  strsplit("")
+
+split_backpack <- function(b) {
+  half <- length(b) / 2L
+  list(head(b, half), tail(b, half))
+}
+
+scores <- c(letters, LETTERS)
+d03_input |> 
+  map(split_backpack) |> 
+  map_chr(~ intersect(.x[[1]], .x[[2]])) |> 
+  match(scores) |> 
+  sum()
+```
+
+    ## [1] 7568
+
+## Part 2
+
+``` r
+split(d03_input, ((seq_along(d03_input) + 2L) %/% 3)) |> 
+  map_chr(
+    ~ intersect(.x[[1]], .x[[2]]) |> 
+      intersect(.x[[3]])
+  ) |> 
+  match(scores) |> 
+  sum()
+```
+
+    ## [1] 2780
