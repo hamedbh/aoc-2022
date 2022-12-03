@@ -83,3 +83,35 @@ d02_input |>
   summarise(total_score = sum(me_int + score))
 ```
 
+# Day 3
+
+## Part 1
+
+```{r day3-part1}
+d03_input <- readLines(here::here("input/day_03.txt")) |> 
+  strsplit("")
+
+split_backpack <- function(b) {
+  half <- length(b) / 2L
+  list(head(b, half), tail(b, half))
+}
+
+scores <- c(letters, LETTERS)
+d03_input |> 
+  map(split_backpack) |> 
+  map_chr(~ intersect(.x[[1]], .x[[2]])) |> 
+  match(scores) |> 
+  sum()
+```
+
+## Part 2
+
+```{r day3-part2}
+split(d03_input, ((seq_along(d03_input) + 2L) %/% 3)) |> 
+  map_chr(
+    ~ intersect(.x[[1]], .x[[2]]) |> 
+      intersect(.x[[3]])
+  ) |> 
+  match(scores) |> 
+  sum()
+```
