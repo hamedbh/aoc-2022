@@ -115,3 +115,31 @@ split(d03_input, ((seq_along(d03_input) + 2L) %/% 3)) |>
   match(scores) |> 
   sum()
 ```
+
+# Day 4
+
+## Part 1
+
+```{r day4-part1}
+d04_input <- readLines(here::here("input/day_04.txt")) |> 
+  strsplit("[,-]") |> 
+  map(
+    function(x) {
+      list(
+        left = seq(x[[1]], x[[2]]), 
+        right = seq(x[[3]], x[[4]])
+      )
+    }
+  )
+d04_input |> 
+  map_lgl(~ all(.x[[1]] %in% .x[[2]]) | all(.x[[2]] %in% .x[[1]])) |> 
+  sum()
+```
+
+## Part 2
+
+```{r day4-part2}
+d04_input |> 
+  map_lgl(~ any(.x[[1]] %in% .x[[2]]) | any(.x[[2]] %in% .x[[1]])) |> 
+  sum()
+```
