@@ -4,6 +4,7 @@ Advent of Code 2022
 - <a href="#day-1" id="toc-day-1">Day 1</a>
 - <a href="#day-2" id="toc-day-2">Day 2</a>
 - <a href="#day-3" id="toc-day-3">Day 3</a>
+- <a href="#day-4" id="toc-day-4">Day 4</a>
 
 Here’s my work on Advent of Code 2022. I’ve never finished one of these,
 perhaps this will be the year …
@@ -146,3 +147,35 @@ split(d03_input, ((seq_along(d03_input) + 2L) %/% 3)) |>
 ```
 
     ## [1] 2780
+
+# Day 4
+
+## Part 1
+
+``` r
+d04_input <- readLines(here::here("input/day_04.txt")) |> 
+  strsplit("[,-]") |> 
+  map(
+    function(x) {
+      list(
+        left = seq(x[[1]], x[[2]]), 
+        right = seq(x[[3]], x[[4]])
+      )
+    }
+  )
+d04_input |> 
+  map_lgl(~ all(.x[[1]] %in% .x[[2]]) | all(.x[[2]] %in% .x[[1]])) |> 
+  sum()
+```
+
+    ## [1] 602
+
+## Part 2
+
+``` r
+d04_input |> 
+  map_lgl(~ any(.x[[1]] %in% .x[[2]]) | any(.x[[2]] %in% .x[[1]])) |> 
+  sum()
+```
+
+    ## [1] 891
