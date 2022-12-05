@@ -5,6 +5,7 @@ Advent of Code 2022
 - <a href="#day-2" id="toc-day-2">Day 2</a>
 - <a href="#day-3" id="toc-day-3">Day 3</a>
 - <a href="#day-4" id="toc-day-4">Day 4</a>
+- <a href="#day-5" id="toc-day-5">Day 5</a>
 
 Here’s my work on Advent of Code 2022. I’ve never finished one of these,
 perhaps this will be the year …
@@ -27,6 +28,7 @@ library(dplyr)
     ##     intersect, setdiff, setequal, union
 
 ``` r
+library(stringi)
 walk(list.files(here::here("R"), full.names = TRUE), source)
 ```
 
@@ -179,3 +181,49 @@ d04_input |>
 ```
 
     ## [1] 891
+
+# Day 5
+
+## Part 1
+
+``` r
+d05_input <- readLines(here::here("input/day_05.txt"))
+d05_crates <- d05_input[seq_len(which(d05_input == "") - 2L)]
+d05_procs <- d05_input[seq(which(d05_input == "") + 1L, length(d05_input))] |> 
+  map(
+    ~ stri_extract_all_regex(.x, "\\d+", simplify = TRUE)[1, ] |> 
+      as.integer()
+  )
+
+d05_crate_matrix <- seq(from = 2, by = 4, length.out = 9) |> 
+  map(~ substr(d05_crates, .x, .x)) |> 
+  reduce(rbind) |> 
+  t()
+d05_stacks <- map(
+  seq_len(9),
+  ~ grep("[A-Z]", d05_crate_matrix[, .x], value = TRUE)
+)
+```
+
+``` r
+for (proc in d05_procs) {
+  n <- proc[[1]]
+  from <- proc[[2]]
+  to <- proc[[3]]
+  moving <- d05_stacks[[from]][seq_len(n)]
+  d05_stacks[[from]] <- 
+    d05_stacks[[from]][seq(n + 1, length(d05_stacks[[from]]))]
+  d05_stacks[[to]] <- c(moving, d05_stacks[[to]])
+}
+# d05_restack <- function(stacks, procs) {
+#   
+# }
+
+d05_stacks |> 
+  map_chr(~ .x[[1]]) |> 
+  stri_c(collapse = "")
+```
+
+    ## [1] "TCGLQSLPW"
+
+## Part 2
