@@ -6,6 +6,7 @@ Advent of Code 2022
 - <a href="#day-3" id="toc-day-3">Day 3</a>
 - <a href="#day-4" id="toc-day-4">Day 4</a>
 - <a href="#day-5" id="toc-day-5">Day 5</a>
+- <a href="#day-6" id="toc-day-6">Day 6</a>
 
 Here’s my work on Advent of Code 2022. I’ve never finished one of these,
 perhaps this will be the year …
@@ -41,7 +42,7 @@ d01_input <- readLines(here::here("input/day_01.txt")) |>
   as.integer()
 
 d01_calories <- split(d01_input, cumsum(is.na(d01_input))) |> 
-  vapply(sum, integer(1L), na.rm = TRUE)
+  map_int(sum, na.rm = TRUE)
 
 d01_calories |> 
   max()
@@ -63,6 +64,8 @@ d01_calories |>
 # Day 2
 
 ## Part 1
+
+It’s nice to have a chance to use `switch()`.
 
 ``` r
 d02_input <- read.table(
@@ -184,6 +187,10 @@ d04_input |>
 
 # Day 5
 
+This one was annoying, mostly because parsing the inputs was a pain. I
+also failed to read the instructions for part 1 correctly, which meant I
+was solving part 2 without realising it.
+
 ## Part 1
 
 ``` r
@@ -210,22 +217,27 @@ d05_stacks <- map(
   ~ grep("[A-Z]", d05_crate_matrix[.x, ], value = TRUE) |> 
     unname()
 )
-```
 
-``` r
-for (step in d05_steps) {
-  n <- step[[1]]
-  from <- step[[2]]
-  to <- step[[3]]
-  moving <- rev(d05_stacks[[from]][seq_len(n)])
-  d05_stacks[[from]] <- 
-    d05_stacks[[from]][seq(n + 1, length(d05_stacks[[from]]))]
-  d05_stacks[[to]] <- c(moving, d05_stacks[[to]])
+# If I'm going to have to write a loop, let's at least put it inside a function.
+d05_restack <- function(stacks, steps, part1 = TRUE) {
+  for (step in steps) {
+    n <- step[[1]]
+    from <- step[[2]]
+    to <- step[[3]]
+    if (isTRUE(part1)) {
+      moving <- rev(stacks[[from]][seq_len(n)])
+    } else {
+      moving <- stacks[[from]][seq_len(n)]
+    }
+    stacks[[from]] <- 
+      stacks[[from]][seq(n + 1, length(stacks[[from]]))]
+    stacks[[to]] <- c(moving, stacks[[to]])
+  }
+  stacks |> 
+    map_chr(~ .x[[1]]) |> 
+    stri_c(collapse = "")
 }
-
-d05_stacks |> 
-  map_chr(~ .x[[1]]) |> 
-  stri_c(collapse = "")
+d05_restack(d05_stacks, d05_steps, part1 = TRUE)
 ```
 
     ## [1] "VWLCWGSDQ"
@@ -233,25 +245,42 @@ d05_stacks |>
 ## Part 2
 
 ``` r
-d05_stacks <- map(
-  seq_len(9),
-  ~ grep("[A-Z]", d05_crate_matrix[.x, ], value = TRUE) |> 
-    unname()
-)
-
-for (step in d05_steps) {
-  n <- step[[1]]
-  from <- step[[2]]
-  to <- step[[3]]
-  moving <- d05_stacks[[from]][seq_len(n)]
-  d05_stacks[[from]] <- 
-    d05_stacks[[from]][seq(n + 1, length(d05_stacks[[from]]))]
-  d05_stacks[[to]] <- c(moving, d05_stacks[[to]])
-}
-
-d05_stacks |> 
-  map_chr(~ .x[[1]]) |> 
-  stri_c(collapse = "")
+d05_restack(d05_stacks, d05_steps, part1 = FALSE)
 ```
 
     ## [1] "TCGLQSLPW"
+
+# Day 6
+
+First `while` loop of the year. At least it’s enclosed in a function.
+
+## Part 1
+
+``` r
+d06_input <- readLines(here::here("input/day_06.txt")) |> 
+  strsplit("") |> 
+  pluck(1)
+
+d06_find_marker <- function(d06_input, type = c("packet", "message")) {
+  type <- match.arg(type)
+  gap <- switch(type, packet = 3L, message = 13L)
+  i <- 0L
+  marker <- FALSE
+  while (!marker) {
+    i <- i + 1L
+    marker <- !(any(duplicated(d06_input[seq(i, i + gap)])))
+  }
+  i + gap
+}
+d06_find_marker(d06_input, "packet")
+```
+
+    ## [1] 1566
+
+## Part 2
+
+``` r
+d06_find_marker(d06_input, "message")
+```
+
+    ## [1] 2265
