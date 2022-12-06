@@ -152,36 +152,39 @@ d04_input |>
 ```{r day5-part1-setup}
 d05_input <- readLines(here::here("input/day_05.txt"))
 d05_crates <- d05_input[seq_len(which(d05_input == "") - 2L)]
-d05_procs <- d05_input[seq(which(d05_input == "") + 1L, length(d05_input))] |> 
+d05_steps <- d05_input[seq(which(d05_input == "") + 1L, length(d05_input))] |> 
   map(
     ~ stri_extract_all_regex(.x, "\\d+", simplify = TRUE)[1, ] |> 
       as.integer()
   )
 
-d05_crate_matrix <- seq(from = 2, by = 4, length.out = 9) |> 
-  map(~ substr(d05_crates, .x, .x)) |> 
+d05_crate_matrix <- map(
+  d05_crates, 
+  function(crate) {
+    seq(from = 2, by = 4, length.out = 9) |> 
+      map_chr(~ stri_sub(crate, .x, .x))
+  }
+) |> 
   reduce(rbind) |> 
   t()
+
 d05_stacks <- map(
   seq_len(9),
-  ~ grep("[A-Z]", d05_crate_matrix[, .x], value = TRUE)
+  ~ grep("[A-Z]", d05_crate_matrix[.x, ], value = TRUE) |> 
+    unname()
 )
 ```
 
 ```{r day5-part1-doing}
-
-for (proc in d05_procs) {
-  n <- proc[[1]]
-  from <- proc[[2]]
-  to <- proc[[3]]
-  moving <- d05_stacks[[from]][seq_len(n)]
+for (step in d05_steps) {
+  n <- step[[1]]
+  from <- step[[2]]
+  to <- step[[3]]
+  moving <- rev(d05_stacks[[from]][seq_len(n)])
   d05_stacks[[from]] <- 
     d05_stacks[[from]][seq(n + 1, length(d05_stacks[[from]]))]
   d05_stacks[[to]] <- c(moving, d05_stacks[[to]])
 }
-# d05_restack <- function(stacks, procs) {
-#   
-# }
 
 d05_stacks |> 
   map_chr(~ .x[[1]]) |> 
@@ -191,6 +194,24 @@ d05_stacks |>
 ## Part 2
 
 ```{r day5-part2}
+d05_stacks <- map(
+  seq_len(9),
+  ~ grep("[A-Z]", d05_crate_matrix[.x, ], value = TRUE) |> 
+    unname()
+)
 
+for (step in d05_steps) {
+  n <- step[[1]]
+  from <- step[[2]]
+  to <- step[[3]]
+  moving <- d05_stacks[[from]][seq_len(n)]
+  d05_stacks[[from]] <- 
+    d05_stacks[[from]][seq(n + 1, length(d05_stacks[[from]]))]
+  d05_stacks[[to]] <- c(moving, d05_stacks[[to]])
+}
+
+d05_stacks |> 
+  map_chr(~ .x[[1]]) |> 
+  stri_c(collapse = "")
 ```
 
