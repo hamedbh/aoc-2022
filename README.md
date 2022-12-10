@@ -7,6 +7,7 @@ Advent of Code 2022
 - <a href="#day-4" id="toc-day-4">Day 4</a>
 - <a href="#day-5" id="toc-day-5">Day 5</a>
 - <a href="#day-6" id="toc-day-6">Day 6</a>
+- <a href="#day-7" id="toc-day-7">Day 7</a>
 
 Here’s my work on Advent of Code 2022. I’ve never finished one of these,
 perhaps this will be the year …
@@ -284,3 +285,37 @@ d06_find_marker(d06_input, "message")
 ```
 
     ## [1] 2265
+
+# Day 7
+
+This one was really annoying, did not care for it.
+
+## Part 1
+
+``` r
+d07_input <- readLines(here::here("input/day_07.txt"))
+d07_res <- d07_current <- double()
+
+for (line in d07_input) {
+  if (line == "$ ls") {
+    d07_current <- c(d07_current, 0)
+  } else if (grepl("^\\d", line)) {
+    d07_current <- d07_current + as.double(gsub("\\D", "", line))
+  } else if (line == "$ cd ..") {
+    d07_res <- c(d07_res, tail(d07_current, 1))
+    d07_current <- head(d07_current, -1)
+  }
+}
+d07_res <- c(d07_current, d07_res)
+sum(d07_res[d07_res < 100000])
+```
+
+    ## [1] 1307902
+
+## Part 2
+
+``` r
+min(d07_res[d07_res > (30000000 - (70000000 - d07_res[[1]]))])
+```
+
+    ## [1] 7068748
