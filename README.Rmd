@@ -236,3 +236,33 @@ d06_find_marker(d06_input, "packet")
 ```{r day6-part2}
 d06_find_marker(d06_input, "message")
 ```
+
+# Day 7
+
+This one was really annoying, did not care for it.
+
+## Part 1
+
+```{r day7-part1}
+d07_input <- readLines(here::here("input/day_07.txt"))
+d07_res <- d07_current <- double()
+
+for (line in d07_input) {
+  if (line == "$ ls") {
+    d07_current <- c(d07_current, 0)
+  } else if (grepl("^\\d", line)) {
+    d07_current <- d07_current + as.double(gsub("\\D", "", line))
+  } else if (line == "$ cd ..") {
+    d07_res <- c(d07_res, tail(d07_current, 1))
+    d07_current <- head(d07_current, -1)
+  }
+}
+d07_res <- c(d07_current, d07_res)
+sum(d07_res[d07_res < 100000])
+```
+
+## Part 2
+
+```{r day7-part2}
+min(d07_res[d07_res > (30000000 - (70000000 - d07_res[[1]]))])
+```
